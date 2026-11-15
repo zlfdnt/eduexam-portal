@@ -1,4 +1,4 @@
-// Halaman beranda publik. Teks testimoni adalah CONTOH — ganti dengan testimoni asli sekolah Anda.
+// Halaman beranda publik (hero, fitur, live monitoring, arsitektur, perbandingan, FAQ).
 const Landing = (() => {
   const HERO = [
     { h: 'Ujian daring yang <em>aman</em>, cepat, dan tanpa biaya hosting', p: 'Siswa masuk hanya dengan PIN. Guru memantau langsung, nilai keluar otomatis — semua berjalan di ekosistem Google Workspace sekolah Anda.', a: ['ujian', 'ungu'], f: [['users', '32 siswa', 'sedang mengerjakan', 'ok', 'top:4%;left:-2%', 34, 26, 0], ['check', 'Autosave aktif', 'Jawaban tersimpan', '', 'top:40%;right:-4%', -30, 22, -1.6], ['clock', '01:14:29', 'sisa waktu ujian', 'warn', 'bottom:3%;left:6%', 24, -30, -3]] },
@@ -13,22 +13,29 @@ const Landing = (() => {
     { t: 'Bank Soal & Impor CSV', d: 'Tulis soal langsung atau impor massal dari Excel/CSV. Satu bank soal, banyak ujian.', tags: ['Impor massal', 'Milik guru'], art: [['bank', 'ungu'], ['ujian', 'biru'], ['pin', 'oranye']] },
     { t: 'Rekap & Analisis Butir', d: 'Sebaran nilai, rerata per kelas, tingkat kesukaran soal, dan unduhan CSV/PDF.', tags: ['Grafik', 'Unduh'], art: [['nilai', 'ungu'], ['bank', 'hijau'], ['live', 'oranye']] }
   ];
-  const TESTI = [
-    ['Guru Matematika', 'Ibu Sari', 'Rekap nilai yang dulu butuh berjam-jam sekarang selesai begitu siswa menekan kumpul. Tampilan live monitoring sangat membantu saat mengawasi dua ruang sekaligus.', 5],
-    ['Guru IPA', 'Bapak Dedi', 'Siswa cukup memasukkan PIN, tidak ada akun yang harus diingat. Antrean masuk ruang ujian jadi jauh lebih cepat dan rapi.', 5],
-    ['Wakil Kurikulum', 'Ibu Maya', 'Admin bisa melihat semua ujian yang sedang berjalan dan mencetak PIN per kelas. Laporan pelanggaran memudahkan evaluasi tata tertib ujian.', 4],
-    ['Guru Bahasa Inggris', 'Bapak Rendra', 'Pengacakan soal dan pilihan jawaban membuat siswa sulit saling mencontek. Analisis butir membantu saya merevisi soal yang terlalu sulit.', 5],
-    ['Pengawas Ruang', 'Ibu Lestari', 'Saat ada siswa terkunci karena keluar layar penuh, saya bisa membukanya dari satu tombol setelah memastikan situasinya.', 4],
-    ['Guru Informatika', 'Bapak Arif', 'Karena berjalan di Google Workspace, sekolah kami tidak perlu menyewa server. Data tersimpan di spreadsheet yang bisa kami cadangkan sendiri.', 5]
+  const ARCH = [
+    ['cloud', 'Berbasis Cloud Google', 'Berjalan di infrastruktur Google Workspace / Apps Script yang stabil dan aman.', 'Backend berupa Google Apps Script (REST API JSON), frontend statis di GitHub Pages. Rahasia sistem disimpan di Script Properties, bukan di kode atau spreadsheet.'],
+    ['sheet', 'Penyimpanan Mandiri (Spreadsheet)', 'Data nilai dan rekap tersimpan langsung di Google Sheets milik sekolah.', 'Seluruh data berada di spreadsheet di Drive sekolah Anda: mudah dilihat, mudah dicadangkan (tersedia fungsi cadangan), dan tidak terkunci pada satu vendor.'],
+    ['bolt', 'Ringan untuk Ujian Serentak', 'Login PIN, autosave lewat cache, dan penulisan data secara batch.', 'Autosave ditulis ke cache lalu disalin ke Sheets berkala, dan penilaian dilakukan di server. Karena ada kuota Google, lakukan uji beban dan jalankan ujian per gelombang bila pesertanya sangat banyak.'],
+    ['log', 'Log Aktivitas Transparan', 'Pelanggaran dan perpindahan tab tercatat dengan stempel waktu.', 'Pindah tab, keluar layar penuh, dan salin-tempel masuk ke sheet LogPelanggaran dan tampil real-time di dashboard guru. Pengawasan guru tetap diperlukan.'],
+    ['device', 'Akses Multi-Device', 'Dapat diakses dengan laptop, Chromebook, tablet, maupun smartphone siswa.', 'Tampilan responsif untuk semua ukuran layar. Catatan: Safari di iPhone/iPad tidak mendukung layar penuh untuk web, tetapi perpindahan tab tetap tercatat.'],
+    ['wallet', 'Tanpa Biaya Server Bulanan', 'Bebas sewa server pihak ketiga.', 'Backend memakai akun Google dan frontend memakai GitHub Pages, keduanya gratis untuk penggunaan ini (tunduk pada kuota Google).']
   ];
-  const stars = n => '★'.repeat(n) + '☆'.repeat(5 - n);
+  const FAQ = [
+    ['Apakah siswa perlu membuat akun email atau kata sandi sendiri?', 'Tidak. Siswa cukup masuk dengan PIN 6 digit yang dibuat guru/admin dan dibagikan oleh pengawas. Guru dan admin masuk dengan akun dan kata sandi.'],
+    ['Bagaimana jika koneksi internet siswa putus di tengah ujian?', 'Jawaban tersimpan otomatis (autosave) dan cadangannya juga ada di perangkat siswa. Setelah tersambung kembali, siswa masuk lagi dengan PIN yang sama dan melanjutkan dengan sisa waktu yang benar, karena waktu dihitung oleh server.'],
+    ['Apakah soal bisa diimpor secara massal?', 'Ya. Guru dapat mengimpor soal lewat berkas CSV (simpan dari Excel sebagai CSV) untuk pilihan ganda, pilihan ganda kompleks, menjodohkan, isian singkat, maupun uraian. Tersedia template yang bisa diunduh.'],
+    ['Bagaimana cara guru memantau kecurangan?', 'Melalui dasbor Live Monitoring yang diperbarui tiap 10–15 detik: status tiap siswa, progres jawaban, jumlah pelanggaran, dan log pindah tab atau keluar layar penuh. Guru dapat menambah waktu, membuka kunci, atau memaksa kumpul.'],
+    ['Apakah ujian benar-benar bebas dari kecurangan?', 'Tidak ada aplikasi berbasis browser yang menjamin 100%, misalnya foto layar dengan HP kedua tidak bisa dicegah. EduExam Portal mempersulit dan mencatat pelanggaran, sehingga pengawasan guru tetap diperlukan.'],
+    ['Berapa banyak siswa yang bisa ujian bersamaan?', 'Bergantung pada kuota Google Apps Script. Karena itu kami menyarankan uji coba satu kelas lebih dulu, uji beban sebelum hari ujian, dan menjalankan ujian per gelombang kelas jika pesertanya sangat banyak.']
+  ];
   const TICK = ['Masuk hanya dengan PIN', 'Autosave tahan koneksi putus', 'Soal & pilihan diacak', 'Live monitoring', 'Deteksi pindah tab', 'Penilaian otomatis', 'Impor soal CSV', 'Analisis butir soal', 'Tanpa biaya hosting', 'Mode gelap'];
   const ROWS = [['Ahmad Fauzi', 34], ['Bunga Citra', 28], ['Dimas Prasetyo', 19, 1], ['Dewi Sartika', 40], ['Eko Prasetyo', 31]];
   function render(root) {
     const boot = Api.S.me ? `<a class="btn btn-p btn-sm" href="#/${Api.S.me.peran === 'siswa' ? 'siswa' : 'staff/dashboard'}">Buka aplikasi</a>` : `<a class="btn btn-p btn-sm btn-cta" href="#/masuk">Masuk</a>`;
     const fl = f => `<div class="fl" style="${f[4]};--dx:${f[5]};--dy:${f[6]};--dl:${f[7]}s"><div><span class="ic2 ${f[3]}">${ic(f[0], 18)}</span><span><b>${esc(f[1])}</b><small>${esc(f[2])}</small></span></div></div>`;
     root.innerHTML = `<div class="lp">
-    <header class="lp-nav" id="nv"><a class="logo" href="#/"><i>${ic('grad', 22)}</i>EduExam Portal</a><nav><a href="#fitur">Fitur</a><a href="#live">Live Monitoring</a><a href="#alur">Cara Kerja</a><a href="#testimoni">Testimoni</a></nav>${boot}</header>
+    <header class="lp-nav" id="nv"><a class="logo" href="#/"><i>${ic('grad', 22)}</i>EduExam Portal</a><nav><a href="#fitur">Fitur</a><a href="#live">Live Monitoring</a><a href="#alur">Cara Kerja</a><a href="#arsitektur">Arsitektur</a><a href="#faq">FAQ</a></nav>${boot}</header>
     <section class="hero" id="hero0"><div class="mesh"><i></i><i></i><i></i></div><div class="dotgrid"></div>
       <div class="hero-box" id="hero">${HERO.map((s, i) => `<div class="sl ${i ? '' : 'on'}"><div class="tx"><span class="livechip">Ujian daring sekolah</span><h1>${s.h}</h1><p class="lead">${esc(s.p)}</p><div class="row"><a class="btn btn-p btn-lg btn-cta" href="#/masuk">Masuk ke Ruang Ujian ${ic('arrow', 18)}</a><a class="btn btn-lg" href="#fitur">Lihat fitur</a></div></div>
         <div class="stage"><div class="ring"></div><div class="art"><img alt="" src="${Art.uri(...s.a)}"></div>${s.f.map(fl).join('')}</div></div>`).join('')}<div class="dots">${HERO.map((_, i) => `<button class="dot ${i ? '' : 'on'}" aria-label="Slide ${i + 1}"></button>`).join('')}</div></div></section>
@@ -46,8 +53,14 @@ const Landing = (() => {
         <div class="row between" style="margin-top:14px"><span class="sm mute">Integritas ruang ujian</span><b style="color:var(--ok)">95.1%</b></div></div></div></div></section>
     <section id="alur"><div class="wrap"><div class="sec-h rv"><span class="eyebrow">Cara kerja</span><h2>Tiga langkah menuju ujian</h2><p>Sederhana untuk guru, ringan untuk siswa.</p></div>
       <div class="steps"><div class="card step glow rv"><h3>Siapkan soal &amp; ujian</h3><p class="mute">Guru menulis atau mengimpor soal, lalu menjadwalkan ujian untuk kelas tertentu.</p></div><div class="card step glow rv" style="transition-delay:.08s"><h3>Bagikan PIN</h3><p class="mute">Guru/admin membuat dan mencetak PIN 6 digit per kelas. Siswa masuk hanya dengan PIN.</p></div><div class="card step glow rv" style="transition-delay:.16s"><h3>Pantau &amp; nilai</h3><p class="mute">Pantau langsung saat ujian, lalu lihat rekap dan analisis nilai otomatis.</p></div></div></div></section>
-    <section id="testimoni" style="background:#fdf8ff"><div class="wrap"><div class="sec-h rv"><span class="eyebrow">Testimoni</span><h2>Kata pengguna</h2><p>Klik kartu untuk membaca selengkapnya.</p><p class="sm mute" style="margin-top:8px">Contoh testimoni — ganti dengan testimoni asli sekolah Anda di <code>js/landing.js</code>.</p></div>
-      <div class="tgrid" id="testi">${TESTI.map((t, i) => `<button class="flip glow rv" data-i="${i}" aria-label="Testimoni ${esc(t[1])}"><div class="flip-in"><div class="face f"><q>${esc(t[2])}</q><div class="who"><span class="av">${ini(t[1])}</span><div><b>${esc(t[1])}</b><span class="mute sm">${esc(t[0])}</span></div></div></div><div class="face bk"><div><div class="stars">${stars(t[3])}</div><h3 style="margin:10px 0 6px;color:#fff">${esc(t[1])}</h3><span style="opacity:.85">${esc(t[0])}</span></div><span class="chip" style="align-self:flex-start;background:rgba(255,255,255,.2);color:#fff">Baca selengkapnya ${ic('arrow', 14)}</span></div></div></button>`).join('')}</div></div></section>
+    <section id="arsitektur" style="background:#fdf8ff"><div class="wrap"><div class="sec-h rv"><span class="eyebrow">Teknologi</span><h2>Arsitektur &amp; Keamanan</h2><p>Dibangun untuk keandalan tinggi tanpa biaya operasional server. Klik kartu untuk detailnya.</p></div>
+      <div class="tgrid" id="arch">${ARCH.map((t, i) => `<button class="flip arch glow rv" data-i="${i}" aria-label="${esc(t[1])}"><div class="flip-in"><div class="face f"><span class="ico2">${ic(t[0], 24)}</span><div><h3>${esc(t[1])}</h3><p class="mute">${esc(t[2])}</p></div></div><div class="face bk"><p>${esc(t[3])}</p><span class="chip" style="align-self:flex-start;background:rgba(255,255,255,.2);color:#fff">Selengkapnya ${ic('arrow', 14)}</span></div></div></button>`).join('')}</div></div></section>
+    <section id="banding"><div class="wrap"><div class="sec-h rv"><span class="eyebrow">Perbandingan</span><h2>Mengapa beralih ke EduExam?</h2><p>Perbandingan efisiensi pengelolaan ujian sekolah.</p></div>
+      <div class="cmp"><span class="vs">VS</span>
+        <div class="cmp-old rv"><span class="chip bad">Ujian kertas / platform konvensional</span><ul>${['Koreksi manual memakan waktu berhari-hari.', 'Pengawasan sulit karena siswa leluasa membuka tab lain.', 'Rekapitulasi nilai manual, rentan salah ketik.'].map(t => `<li><span class="mk">${ic('x', 14)}</span><span>${esc(t)}</span></li>`).join('')}</ul></div>
+        <div class="cmp-new glow rv" style="transition-delay:.1s"><span class="chip" style="background:rgba(255,255,255,.22);color:#fff">EduExam Portal</span><ul>${['Penilaian otomatis begitu siswa mengumpulkan (soal uraian dikoreksi guru).', 'Live monitoring real-time per siswa, lengkap dengan log pelanggaran.', 'Rekap dan analisis nilai otomatis, siap diunduh (CSV / PDF).'].map(t => `<li><span class="mk">${ic('check', 14)}</span><span>${esc(t)}</span></li>`).join('')}</ul></div></div></div></section>
+    <section id="faq" style="background:#fdf8ff"><div class="wrap"><div class="sec-h rv"><span class="eyebrow">FAQ</span><h2>Pertanyaan umum</h2><p>Hal-hal yang sering ditanyakan seputar penerapan CBT di sekolah.</p></div>
+      <div class="faq">${FAQ.map((q, i) => `<div class="fq glow rv ${i ? '' : 'open'}"><button class="fq-q" aria-expanded="${i ? 'false' : 'true'}"><span>${esc(q[0])}</span>${ic('plus', 22)}</button><div class="fq-a"><div><p>${esc(q[1])}</p></div></div></div>`).join('')}</div></div></section>
     <section style="padding:72px 0 96px"><div class="wrap"><div class="cta rv"><span class="bl" style="width:180px;height:180px;left:-50px;top:-60px"></span><span class="bl" style="width:120px;height:120px;right:6%;bottom:-40px;animation-delay:-4s"></span><h2>Siap menjalankan ujian berikutnya?</h2><p>Mulai dari satu kelas. Uji coba terbatas sebelum dipakai pada ujian sesungguhnya.</p><a class="btn btn-w btn-lg btn-cta" href="#/masuk">Masuk sekarang ${ic('arrow', 18)}</a></div></div></section>
     <footer>© ${new Date().getFullYear()} EduExam Portal · Ujian &amp; asesmen daring berbasis Google Workspace${Api.demo() ? ' · <b>MODE DEMO</b>' : ''}</footer></div>`;
     // hero: slideshow otomatis + parallax mouse
@@ -62,13 +75,17 @@ const Landing = (() => {
     const st = ROWS.map(r => r[1]), rows = $$('#mock .row2', root);
     every(() => { if (document.hidden) return; st.forEach((v, i) => { if (ROWS[i][2] || v >= 40) return; if (Math.random() < .6) st[i] = Math.min(40, v + 1); const r = rows[i]; $('.bar i', r).style.width = st[i] / 40 * 100 + '%'; if (st[i] >= 40) { const c = $('.chip', r); c.className = 'chip ok'; c.textContent = 'Selesai'; } });
       const done = st.filter((v, i) => !ROWS[i][2] && v >= 40).length; $('#m1', root).textContent = st.filter((v, i) => !ROWS[i][2] && v < 40).length; $('#m2', root).textContent = done; if (st.every((v, i) => ROWS[i][2] || v >= 40)) ROWS.forEach((r, i) => { st[i] = r[1] >= 40 ? 40 : Math.max(5, r[1] - 18); }); }, 1500);
-    // testimoni: balik otomatis satu per satu, berhenti saat disorot
+    // kartu arsitektur: balik otomatis satu per satu, berhenti saat disorot; klik = popup detail
     const fp = $$('.flip', root); let k = 0, hov = false;
-    fp.forEach(f => { f.addEventListener('pointerenter', () => hov = true); f.addEventListener('pointerleave', () => hov = false); f.addEventListener('click', () => openTesti(+f.dataset.i)); });
-    every(() => { if (hov || document.hidden) return; fp.forEach(f => f.classList.remove('on')); fp[k % fp.length].classList.add('on'); k++; }, 3200);
+    fp.forEach(f => { f.addEventListener('pointerenter', () => hov = true); f.addEventListener('pointerleave', () => hov = false); f.addEventListener('click', () => openInfo(+f.dataset.i)); });
+    every(() => { if (hov || document.hidden) return; fp.forEach(f => f.classList.remove('on')); fp[k % fp.length].classList.add('on'); k++; }, 4200);
+    // FAQ akordeon (satu terbuka)
+    $$('.fq-q', root).forEach(b => b.onclick = () => { const it = b.parentElement, open = !it.classList.contains('open'); $$('.fq.open', root).forEach(x => { x.classList.remove('open'); $('.fq-q', x).setAttribute('aria-expanded', 'false'); }); if (open) { it.classList.add('open'); b.setAttribute('aria-expanded', 'true'); } });
+    // tautan #bagian: gulir halus (tanpa mengganggu router hash)
+    on(root, 'click', e => { const a = e.target.closest('a[href^="#"]'); if (!a || a.getAttribute('href').startsWith('#/')) return; const t = $(a.getAttribute('href'), root); if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth', block: 'start' }); } });
   }
-  function openTesti(i) {
-    const t = TESTI[i]; modal(`<div class="who" style="margin-bottom:14px"><span class="av" style="width:52px;height:52px;font-size:16px">${ini(t[1])}</span><div><h3>${esc(t[1])}</h3><span class="mute">${esc(t[0])}</span></div></div><div class="stars" style="color:var(--warn);font-size:18px">${stars(t[3])}</div><p style="font-size:16px;line-height:1.75">“${esc(t[2])}”</p><p class="sm mute">Contoh testimoni untuk keperluan tampilan.</p>`);
+  function openInfo(i) {
+    const t = ARCH[i]; modal(`<div class="row" style="flex-wrap:nowrap;align-items:center;margin-bottom:14px"><span class="ico2" style="width:54px;height:54px;border-radius:18px;display:grid;place-items:center;background:var(--soft);color:var(--primary);flex:none">${ic(t[0], 26)}</span><h3 style="margin:0">${esc(t[1])}</h3></div><p style="font-weight:600;margin:0 0 10px">${esc(t[2])}</p><p class="mute" style="font-size:15px;line-height:1.75;margin:0">${esc(t[3])}</p>`);
   }
   return { render };
 })();
