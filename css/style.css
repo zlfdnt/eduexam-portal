@@ -175,3 +175,7 @@ body.no-sel .qtext,body.no-sel .opt{user-select:none;-webkit-user-select:none}
 .srch .in{padding-left:14px}.top .srch .in{padding-left:40px}
 .logo{white-space:nowrap}.side .logo{font-size:18px}
 .cal span{display:grid;place-items:center;aspect-ratio:1;padding:0;border-radius:50%}.cal .h{aspect-ratio:auto;height:28px}
+
+/* bank soal: koleksi */
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px}.fcol{display:block;color:inherit;text-decoration:none}.fcol h3{font-size:18px}
+.crumb{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:var(--mute);font-size:13px}.crumb a{font-weight:600}.crumb b{color:var(--ink)}

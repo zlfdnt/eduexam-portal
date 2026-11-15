@@ -11,6 +11,10 @@ const Mock = (() => {
     { id: 'Q4', mapel: 'Matematika', tipe: 'isian', pertanyaan: 'Hasil dari 12 × 12 adalah …', pilihan: null, kunci: ['144'], bobot: 2 },
     { id: 'Q5', mapel: 'Matematika', tipe: 'uraian', pertanyaan: 'Jelaskan langkah menentukan akar persamaan x² − 5x + 6 = 0.', pilihan: null, kunci: null, bobot: 4 }
   ];
+  bank[0].idKoleksi = 'K2'; bank[1].idKoleksi = 'K2'; bank[2].idKoleksi = 'K1'; bank[3].idKoleksi = 'K1'; bank[4].idKoleksi = 'K1';
+  bank.push({ id: 'Q6', mapel: 'Matematika Kelas 7', tipe: 'pg', pertanyaan: 'Soal lama tanpa koleksi: 5 + 7 = …', pilihan: ['10', '12', '14'], kunci: 1, bobot: 1, idKoleksi: '' });
+  const kol = [{ id: 'K1', mapel: 'Matematika', kelas: ['XII MIPA 1', 'XII MIPA 2'], materi: 'Fungsi & Turunan', catatan: 'Persiapan PAS Genap' }, { id: 'K2', mapel: 'Matematika', kelas: ['XII MIPA 1'], materi: 'Bilangan & Aljabar', catatan: '' }, { id: 'K3', mapel: 'Fisika', kelas: ['XII MIPA 2'], materi: 'Termodinamika', catatan: '' }];
+  const asg = [{ mapel: 'Matematika', kelas: ['XII MIPA 1', 'XII MIPA 2'] }, { mapel: 'Fisika', kelas: ['XII MIPA 2'] }];
   const ujian = [
     { id: 'U1', judul: 'PAS Genap: Matematika Wajib XII', mapel: 'Matematika', mulai: now() - H, selesai: now() + 3 * H, durasi: 90, kelas: ['XII MIPA 1', 'XII MIPA 2'], status: 'terbit', peserta: 12, selesaiN: 3, mulaiN: 8 },
     { id: 'U2', judul: 'Asesmen Bahasa Inggris', mapel: 'Bahasa Inggris', mulai: now() + D, selesai: now() + D + 2 * H, durasi: 60, kelas: ['XII MIPA 1'], status: 'terbit', peserta: 8, selesaiN: 0, mulaiN: 0 },
@@ -38,15 +42,20 @@ const Mock = (() => {
     'ujian.daftarGuru': () => ok({ now: now(), ujian }),
     'ujian.detail': (d) => ok({ ujian: { ...ujian.find(u => u.id === d.id), acak: true, batasPelanggaran: 3, modeKunci: 'kunci', tampilNilai: 'langsung' }, soal: bank.map(q => q.id) }),
     'ujian.simpan': () => ok({ id: 'U9' }, 'Ujian tersimpan (demo).'),
-    'bank.daftar': () => ok({ soal: bank }), 'bank.simpan': (d) => { bank.push({ ...d.soal, id: d.soal.id || 'Q' + (bank.length + 1) }); return ok({}, 'Soal tersimpan (demo).'); },
-    'bank.impor': (d) => ok({ masuk: d.rows.length, gagal: [], jumlahGagal: 0 }), 'bank.hapus': () => ok({}, 'Dihapus (demo).'),
+    'bank.daftar': () => ok({ soal: bank, koleksi: kol, penugasan: asg }),
+    'bank.simpan': (d) => { const k = kol.find(x => x.id === d.soal.idKoleksi); if (!k) return no('Pilih koleksi yang valid.'); const o = { ...d.soal, mapel: k.mapel, id: d.soal.id || 'Q' + (bank.length + 10) }, i = bank.findIndex(x => x.id === o.id); i >= 0 ? bank[i] = o : bank.push(o); return ok({}, 'Soal tersimpan (demo).'); },
+    'bank.impor': (d) => { d.rows.forEach((r, i) => bank.push({ ...r, id: 'QI' + Date.now() + i, idKoleksi: d.idKoleksi, mapel: (kol.find(x => x.id === d.idKoleksi) || {}).mapel })); return ok({ masuk: d.rows.length, gagal: [], jumlahGagal: 0 }); },
+    'bank.hapus': (d) => { const i = bank.findIndex(x => x.id === d.id); if (i >= 0) bank.splice(i, 1); return ok({}, 'Dihapus (demo).'); },
+    'bank.pindah': (d) => { const k = kol.find(x => x.id === d.idKoleksi); bank.forEach(x => { if (d.ids.includes(x.id)) { x.idKoleksi = k.id; x.mapel = k.mapel; } }); return ok({ n: d.ids.length }, d.ids.length + ' soal dipindahkan (demo).'); },
+    'koleksi.simpan': (d) => { const i = kol.findIndex(x => x.id === d.id); if (!asg.find(a => a.mapel.toLowerCase() === String(d.mapel).trim().toLowerCase())) return no('Anda belum ditugaskan mengampu mata pelajaran ini.'); i >= 0 ? Object.assign(kol[i], { kelas: d.kelas, materi: d.materi, catatan: d.catatan }) : kol.push({ id: 'K' + (kol.length + 10), mapel: d.mapel, kelas: d.kelas, materi: d.materi, catatan: d.catatan }); return ok({ id: d.id }, 'Koleksi tersimpan (demo).'); },
+    'koleksi.hapus': (d) => { if (bank.some(x => x.idKoleksi === d.id)) return no('Koleksi masih berisi soal. Pindahkan atau hapus soalnya terlebih dahulu.'); const i = kol.findIndex(x => x.id === d.id); if (i >= 0) kol.splice(i, 1); return ok({}, 'Koleksi dihapus (demo).'); },
     'siswa.daftar': () => ok({ siswa, kelas: [{ id: 'K1', nama: 'XII MIPA 1', wali: '' }, { id: 'K2', nama: 'XII MIPA 2', wali: '' }] }),
     'siswa.pin': (d) => ok({ pins: d.ids.map(id => { const s = siswa.find(x => x.id === id); return { id, nama: s.nama, kelas: s.kelas, pin: String(100000 + Math.random() * 899999 | 0) }; }) }),
     'siswa.impor': (d) => ok({ ditambah: d.rows.length, diperbarui: 0, dilewati: 0 }, 'Impor demo.'), 'kelas.simpan': () => ok({}, 'Tersimpan (demo).'),
     'monitor.data': () => ok(monitor()), 'monitor.aksi': () => ok({ n: 1 }, 'Aksi dijalankan (demo).'),
     'rekap.ujian': () => ok({ ujian: ujian[0], kkm: 75, bins: [0, 0, 0, 0, 1, 2, 4, 6, 4, 2], uraian: [{ sid: 'U1|S1', siswa: 'Ahmad Fauzi', idSoal: 'Q5', pertanyaan: bank[4].pertanyaan, jawaban: 'Faktorkan menjadi (x−2)(x−3), sehingga x = 2 atau x = 3.', skor: null, bobot: 4 }], stat: { n: 19, peserta: 24, rata: 79.3, maks: 98, min: 48, lulus: 74 }, kelas: [{ kelas: 'XII MIPA 1', n: 10, rata: 81.2 }, { kelas: 'XII MIPA 2', n: 9, rata: 77.1 }], rows: siswa.slice(0, 10).map((s, i) => ({ id: s.id, nisn: s.nisn, nama: s.nama, kelas: s.kelas, nilai: 98 - i * 5, pelanggaran: i % 4 === 0 ? 1 : 0, perluKoreksi: i === 0 })), butir: bank.map((q, i) => ({ no: i + 1, id: q.id, tipe: q.tipe, pertanyaan: q.pertanyaan, p: q.tipe === 'uraian' ? null : [85, 52, 40, 70][i] || 60, n: 19 })) }),
     'koreksi.simpan': () => ok({ nilai: 80 }, 'Nilai uraian tersimpan (demo).'),
-    'pengguna.daftar': () => ok({ pengguna: [{ id: 'A1', nama: 'Administrator', username: 'admin', peran: 'admin', status: 'aktif' }, { id: 'G1', nama: 'Ratna Sari, S.Pd', username: 'ratna', peran: 'guru', status: 'aktif' }] }),
+    'pengguna.daftar': () => ok({ pengguna: [{ id: 'A1', nama: 'Administrator', username: 'admin', peran: 'admin', status: 'aktif', penugasan: [] }, { id: 'G1', nama: 'Ratna Sari, S.Pd', username: 'ratna', peran: 'guru', status: 'aktif', penugasan: asg }, { id: 'G2', nama: 'Dedi Kurniawan, S.Pd', username: 'dedi', peran: 'guru', status: 'aktif', penugasan: [] }] }),
     'pengguna.simpan': () => ok({}, 'Tersimpan (demo).'), 'pengguna.sandi': () => ok({}, 'Demo: sandi tidak diubah.'),
     'cfg.ambil': () => ok({ cfg: { BATAS_PIN: 5, BATAS_PELANGGARAN: 3, KKM: 75, POLLING_DETIK: 12, NAMA_SEKOLAH: 'Sekolah Demo' } }), 'cfg.simpan': () => ok({}, 'Tersimpan (demo).'),
     'ujian.daftarSiswa': () => ok({ now: now(), ujian: ujian.filter(u => u.status === 'terbit').map(u => ({ ...u, tampilNilai: 'langsung', sesi: stu[u.id] ? { status: stu[u.id].status, nilai: stu[u.id].nilai } : null })) }),
