@@ -179,3 +179,13 @@ body.no-sel .qtext,body.no-sel .opt{user-select:none;-webkit-user-select:none}
 /* bank soal: koleksi */
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px}.fcol{display:block;color:inherit;text-decoration:none}.fcol h3{font-size:18px}
 .crumb{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:var(--mute);font-size:13px}.crumb a{font-weight:600}.crumb b{color:var(--ink)}
+
+/* pratinjau */
+#sbbar{position:fixed;top:0;left:0;right:0;height:40px;z-index:9000;display:flex;justify-content:center;align-items:center;gap:14px;background:#1F2340;color:#fff;font-size:13px;font-weight:600;padding:0 12px;white-space:nowrap}#sbbar .btn{padding:3px 12px;font-size:12px}
+body.sb{padding-top:40px}body.sb .lp-nav,body.sb .top,body.sb .ex-top{top:40px}body.sb .side{top:40px;height:calc(100vh - 40px)}body.sb .pal-wrap{top:124px}
+@media(max-width:900px){body.sb .side{top:0;height:100vh}#sbbar span{overflow:hidden;text-overflow:ellipsis}}
+.pvbar{position:sticky;top:0;z-index:45;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;padding:8px 16px;background:linear-gradient(90deg,#F59E0B,#f97316);color:#fff;font-size:13px;font-weight:600}.pvbar .btn{padding:4px 12px;font-size:12px}.pvbar .ic{vertical-align:-3px}
+body.pv .ex-top{top:42px}body.pv .pal-wrap{top:126px}
+.pvgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}@media(max-width:980px){.pvgrid{grid-template-columns:1fr}}
+.pvcard{display:flex;flex-direction:column;padding:28px}.pvsteps{margin:0 0 22px;padding-left:20px;color:var(--mute);line-height:1.9;flex:1}.pvsteps li::marker{color:var(--primary);font-weight:700}
+body.pv .auth{min-height:calc(100vh - 42px)}

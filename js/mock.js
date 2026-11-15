@@ -42,6 +42,7 @@ const Mock = (() => {
     'ujian.daftarGuru': () => ok({ now: now(), ujian }),
     'ujian.detail': (d) => ok({ ujian: { ...ujian.find(u => u.id === d.id), acak: true, batasPelanggaran: 3, modeKunci: 'kunci', tampilNilai: 'langsung' }, soal: bank.map(q => q.id) }),
     'ujian.simpan': () => ok({ id: 'U9' }, 'Ujian tersimpan (demo).'),
+    'ujian.pratinjau': () => ok({ judul: ujian[0].judul, mapel: 'Matematika', durasi: 90, batas: 3, mode: 'kunci', tampil: 'langsung', soal: bank.filter(q => q.idKoleksi).map(q => ({ id: q.id, t: q.tipe, q: q.pertanyaan, b: q.bobot, img: '', p: q.pilihan, k: q.kunci })) }),
     'bank.daftar': () => ok({ soal: bank, koleksi: kol, penugasan: asg }),
     'bank.simpan': (d) => { const k = kol.find(x => x.id === d.soal.idKoleksi); if (!k) return no('Pilih koleksi yang valid.'); const o = { ...d.soal, mapel: k.mapel, id: d.soal.id || 'Q' + (bank.length + 10) }, i = bank.findIndex(x => x.id === o.id); i >= 0 ? bank[i] = o : bank.push(o); return ok({}, 'Soal tersimpan (demo).'); },
     'bank.impor': (d) => { d.rows.forEach((r, i) => bank.push({ ...r, id: 'QI' + Date.now() + i, idKoleksi: d.idKoleksi, mapel: (kol.find(x => x.id === d.idKoleksi) || {}).mapel })); return ok({ masuk: d.rows.length, gagal: [], jumlahGagal: 0 }); },
