@@ -61,18 +61,18 @@ function fxInit() {
   });
 }
 function reveal(root = document) {
-  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); const c = e.target.matches('.cnt') ? e.target : null; if (c) countUp(c); $$('.cnt', e.target).forEach(countUp); } }), { threshold: .15 });
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('vis'); io.unobserve(e.target); const c = e.target.matches('.cnt') ? e.target : null; if (c) countUp(c); $$('.cnt', e.target).forEach(countUp); } }), { threshold: .15 });
   $$('.rv', root).forEach(el => io.observe(el)); Leave.add(() => io.disconnect());
 }
 function countUp(el) {
   if (el._d) return; el._d = 1; const to = +el.dataset.to, suf = el.dataset.suf || '', t0 = performance.now();
   const f = t => { const p = Math.min(1, (t - t0) / 1200); el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))) + suf; if (p < 1) requestAnimationFrame(f); }; requestAnimationFrame(f);
 }
-function slideshow(el, ms = 4200) {
+function slideshow(el, ms = 4200, pause = true) {
   const s = $$('.sl', el); if (s.length < 2) return; let i = 0, t;
   const go = n => { s[i].classList.remove('on'); i = (n + s.length) % s.length; s[i].classList.add('on'); $$('.dot', el).forEach((d, k) => d.classList.toggle('on', k === i)); };
   const start = () => { clearInterval(t); if (!matchMedia('(prefers-reduced-motion:reduce)').matches) t = setInterval(() => go(i + 1), ms); };
-  el.addEventListener('pointerenter', () => clearInterval(t)); el.addEventListener('pointerleave', start);
+  if (pause) { el.addEventListener('pointerenter', () => clearInterval(t)); el.addEventListener('pointerleave', start); }
   $$('.dot', el).forEach((d, k) => d.onclick = e => { e.stopPropagation(); go(k); start(); }); start(); Leave.add(() => clearInterval(t));
 }
 
